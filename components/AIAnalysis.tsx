@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Match, GeminiAnalysis } from '../types';
 import { analyzeMatchOdds, getQuickInsight } from '../services/geminiService';
 import { Sparkles, Brain, AlertTriangle, CheckCircle, Search } from 'lucide-react';
 
 interface AIAnalysisProps {
   match: Match;
+  analysis: GeminiAnalysis | null;
+  onAnalysisComplete: (data: GeminiAnalysis) => void;
 }
 
-const AIAnalysis: React.FC<AIAnalysisProps> = ({ match }) => {
-  const [analysis, setAnalysis] = useState<GeminiAnalysis | null>(null);
+const AIAnalysis: React.FC<AIAnalysisProps> = ({ match, analysis, onAnalysisComplete }) => {
   const [insight, setInsight] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingInsight, setLoadingInsight] = useState(false);
@@ -19,7 +20,7 @@ const AIAnalysis: React.FC<AIAnalysisProps> = ({ match }) => {
     setError(null);
     try {
       const result = await analyzeMatchOdds(match);
-      setAnalysis(result);
+      onAnalysisComplete(result);
     } catch (err) {
       setError("Failed to analyze match. Please try again.");
     } finally {
@@ -39,8 +40,6 @@ const AIAnalysis: React.FC<AIAnalysisProps> = ({ match }) => {
     }
   }
 
-  // Auto-fetch simple analysis on mount if desired, but button is better for API cost control in demo
-  
   if (loading) {
     return (
       <div className="bg-brand-800 rounded-xl p-8 text-center animate-pulse border border-brand-700">
@@ -53,7 +52,7 @@ const AIAnalysis: React.FC<AIAnalysisProps> = ({ match }) => {
 
   if (!analysis) {
     return (
-      <div className="bg-brand-800 rounded-xl p-8 text-center border border-brand-700 bg-gradient-to-b from-brand-800 to-brand-900">
+      <div className="bg-brand-800 rounded-xl p-8 text-center border border-brand-700 bg-gradient-to-b from-brand-800 to-brand-900 shadow-xl">
         <Brain className="mx-auto text-purple-400 mb-4" size={48} />
         <h3 className="text-2xl font-bold text-white mb-2">Unlock True Odds</h3>
         <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -63,7 +62,7 @@ const AIAnalysis: React.FC<AIAnalysisProps> = ({ match }) => {
           onClick={handleAnalyze}
           className="bg-brand-accent hover:bg-emerald-400 text-brand-900 font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg shadow-emerald-900/50 flex items-center gap-2 mx-auto"
         >
-          <Sparkles size={20} /> Analyze Match
+          <Sparkles size={20} /> Run AI Prediction Model
         </button>
       </div>
     );

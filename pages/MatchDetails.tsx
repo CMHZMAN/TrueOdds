@@ -1,9 +1,14 @@
-import React from 'react';
-import { Match } from '../types';
+import React, { useMemo, useState } from 'react';
+import { Match, GeminiAnalysis } from '../types';
 import { ArrowLeft, BarChart2, Shield } from 'lucide-react';
 import OddsComparison from '../components/OddsComparison';
 import AIAnalysis from '../components/AIAnalysis';
 import TeamLogo from '../components/TeamLogo';
+import OddsHistoryChart from '../components/OddsHistoryChart';
+import StatsComparison from '../components/StatsComparison';
+import HistoricalAnalysis from '../components/HistoricalAnalysis';
+import PredictionConsensus from '../components/PredictionConsensus';
+import { generateMockHistory } from '../constants';
 
 interface MatchDetailsProps {
   match: Match;
@@ -11,6 +16,12 @@ interface MatchDetailsProps {
 }
 
 const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
+  // Lifted state to share with PredictionConsensus
+  const [aiAnalysis, setAiAnalysis] = useState<GeminiAnalysis | null>(null);
+
+  // Memoize history generation so it doesn't change on re-renders
+  const historyData = useMemo(() => generateMockHistory(match), [match]);
+
   return (
     <div className="animate-fade-in pb-12">
       <button 
@@ -52,63 +63,58 @@ const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content: AI Analysis takes prominence */}
+        {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          <AIAnalysis match={match} />
+          
+          {/* New Prediction Consensus Engine */}
+          <PredictionConsensus match={match} analysis={aiAnalysis} />
+
+          <AIAnalysis 
+            match={match} 
+            analysis={aiAnalysis}
+            onAnalysisComplete={setAiAnalysis}
+          />
+          
+          <StatsComparison homeTeam={match.homeTeam} awayTeam={match.awayTeam} />
+
+          <HistoricalAnalysis match={match} />
+          
+          <OddsHistoryChart 
+            data={historyData} 
+            homeName={match.homeTeam.name} 
+            awayName={match.awayTeam.name} 
+            showDraw={match.sport === 'Soccer'}
+          />
+
           <OddsComparison match={match} />
         </div>
 
         {/* Sidebar: Stat Blocks */}
         <div className="space-y-6">
-           <div className="bg-brand-800 rounded-xl p-6 border border-brand-700">
-              <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-                <BarChart2 className="text-blue-400" size={18} /> Head-to-Head Stats
-              </h3>
-              <div className="space-y-4">
-                 <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Goals Scored (Avg)</span>
-                 </div>
-                 <div className="flex items-center gap-2">
-                    <span className="text-xs w-8 text-right font-mono">{match.homeTeam.stats.goalsScored || '-'}</span>
-                    <div className="flex-1 h-2 bg-brand-900 rounded-full overflow-hidden flex">
-                       <div style={{width: '50%'}} className="bg-emerald-500 h-full"></div>
-                       <div style={{width: '50%'}} className="bg-blue-500 h-full"></div>
-                    </div>
-                    <span className="text-xs w-8 text-left font-mono">{match.awayTeam.stats.goalsScored || '-'}</span>
-                 </div>
-                 <div className="flex justify-between text-xs text-slate-500">
-                    <span>{match.homeTeam.name}</span>
-                    <span>{match.awayTeam.name}</span>
-                 </div>
-              </div>
-              
-              <div className="mt-6 pt-6 border-t border-brand-700">
-                <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase">Recent Form</h4>
-                <div className="flex justify-between items-center mb-2">
-                   <span className="text-sm text-white">{match.homeTeam.name}</span>
-                   <div className="flex gap-1">
-                      {match.homeTeam.recentForm.map((f, i) => (
-                        <span key={i} className={`w-5 h-5 flex items-center justify-center text-[10px] rounded ${f === 'W' ? 'bg-green-500 text-white' : f === 'D' ? 'bg-yellow-500 text-black' : 'bg-red-500 text-white'}`}>{f}</span>
-                      ))}
-                   </div>
-                </div>
-                <div className="flex justify-between items-center">
-                   <span className="text-sm text-white">{match.awayTeam.name}</span>
-                   <div className="flex gap-1">
-                      {match.awayTeam.recentForm.map((f, i) => (
-                        <span key={i} className={`w-5 h-5 flex items-center justify-center text-[10px] rounded ${f === 'W' ? 'bg-green-500 text-white' : f === 'D' ? 'bg-yellow-500 text-black' : 'bg-red-500 text-white'}`}>{f}</span>
-                      ))}
-                   </div>
-                </div>
-              </div>
-           </div>
-
            <div className="bg-gradient-to-br from-purple-900/50 to-brand-900 rounded-xl p-6 border border-purple-500/20">
               <Shield className="text-purple-400 mb-2" size={24} />
               <h3 className="font-bold text-white mb-2">Why Trust Gemini?</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
                 Gemini processes multidimensional data points including player form, tactical matchups, and historical variance that traditional models might miss.
               </p>
+           </div>
+           
+           <div className="bg-brand-800 rounded-xl p-6 border border-brand-700">
+             <h3 className="font-bold text-white mb-4">Betting Tips</h3>
+             <ul className="space-y-3 text-sm text-slate-400">
+               <li className="flex gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5"></div>
+                 Always check lineups before placing bets.
+               </li>
+                <li className="flex gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5"></div>
+                 Look for value, not just winners.
+               </li>
+                <li className="flex gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-brand-accent mt-1.5"></div>
+                 Manage your bankroll responsibly.
+               </li>
+             </ul>
            </div>
         </div>
       </div>

@@ -4,6 +4,19 @@ export enum Sport {
   TENNIS = 'Tennis'
 }
 
+export interface HistoricalStats {
+  majorTitles: number; // Last 10 years
+  avgLeagueFinish: number; // Last 10 years
+  totalGoalsScoredLast10Y?: number;
+}
+
+export interface HeadToHead {
+  homeWins: number;
+  awayWins: number;
+  draws: number;
+  totalMatches: number; // Last 10 years context
+}
+
 export interface Team {
   id: string;
   name: string;
@@ -16,7 +29,8 @@ export interface Team {
     goalsScored?: number; // Avg per game
     goalsConceded?: number; // Avg per game
     possession?: number; // %
-  }
+  };
+  history?: HistoricalStats;
 }
 
 export interface Odds {
@@ -35,6 +49,7 @@ export interface Match {
   awayTeam: Team;
   date: string;
   bookmakerOdds: Odds[];
+  headToHead?: HeadToHead;
 }
 
 export interface GeminiAnalysis {
@@ -54,4 +69,11 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   timestamp: number;
+}
+
+export interface OddsHistoryPoint {
+  timestamp: string;
+  homeWin: number;
+  draw?: number;
+  awayWin: number;
 }
