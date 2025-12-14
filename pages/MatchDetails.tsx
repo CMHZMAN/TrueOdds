@@ -8,6 +8,7 @@ import OddsHistoryChart from '../components/OddsHistoryChart';
 import StatsComparison from '../components/StatsComparison';
 import HistoricalAnalysis from '../components/HistoricalAnalysis';
 import PredictionConsensus from '../components/PredictionConsensus';
+import BetSlip from '../components/BetSlip';
 import { generateMockHistory } from '../constants';
 
 interface MatchDetailsProps {
@@ -16,7 +17,7 @@ interface MatchDetailsProps {
 }
 
 const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
-  // Lifted state to share with PredictionConsensus
+  // Lifted state to share with PredictionConsensus and BetSlip
   const [aiAnalysis, setAiAnalysis] = useState<GeminiAnalysis | null>(null);
 
   // Memoize history generation so it doesn't change on re-renders
@@ -66,7 +67,7 @@ const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* New Prediction Consensus Engine */}
+          {/* Prediction Consensus Engine */}
           <PredictionConsensus match={match} analysis={aiAnalysis} />
 
           <AIAnalysis 
@@ -74,6 +75,9 @@ const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
             analysis={aiAnalysis}
             onAnalysisComplete={setAiAnalysis}
           />
+
+          {/* New Bet Slip Component */}
+          <BetSlip match={match} analysis={aiAnalysis} />
           
           <StatsComparison homeTeam={match.homeTeam} awayTeam={match.awayTeam} />
 
