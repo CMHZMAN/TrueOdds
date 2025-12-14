@@ -1,0 +1,5 @@
+{
+  "name": "TrueOdds AI",
+  "description": "A betting intelligence platform that uses Gemini to analyze team stats and calculate realistic odds to find value bets against bookmakers.",
+  "requestFramePermissions": []
+}
