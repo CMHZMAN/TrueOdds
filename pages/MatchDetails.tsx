@@ -3,6 +3,7 @@ import { Match } from '../types';
 import { ArrowLeft, BarChart2, Shield } from 'lucide-react';
 import OddsComparison from '../components/OddsComparison';
 import AIAnalysis from '../components/AIAnalysis';
+import TeamLogo from '../components/TeamLogo';
 
 interface MatchDetailsProps {
   match: Match;
@@ -24,8 +25,8 @@ const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-accent to-blue-500"></div>
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
-          <div className="text-center md:text-right flex-1">
-             <img src={match.homeTeam.logo} alt="" className="w-20 h-20 mx-auto md:ml-auto mb-2 rounded-full bg-slate-700 object-cover" />
+          <div className="text-center md:text-right flex-1 flex flex-col items-center md:items-end">
+             <TeamLogo url={match.homeTeam.logo} name={match.homeTeam.name} size="xl" className="mb-2" />
              <h2 className="text-2xl md:text-3xl font-bold text-white">{match.homeTeam.name}</h2>
              <div className="text-sm text-slate-400 mt-1">
                 Win Rate: {((match.homeTeam.stats.wins / (match.homeTeam.stats.wins + match.homeTeam.stats.losses + (match.homeTeam.stats.draws || 0))) * 100).toFixed(0)}%
@@ -40,8 +41,8 @@ const MatchDetails: React.FC<MatchDetailsProps> = ({ match, onBack }) => {
             </div>
           </div>
 
-          <div className="text-center md:text-left flex-1">
-             <img src={match.awayTeam.logo} alt="" className="w-20 h-20 mx-auto md:mr-auto mb-2 rounded-full bg-slate-700 object-cover" />
+          <div className="text-center md:text-left flex-1 flex flex-col items-center md:items-start">
+             <TeamLogo url={match.awayTeam.logo} name={match.awayTeam.name} size="xl" className="mb-2" />
              <h2 className="text-2xl md:text-3xl font-bold text-white">{match.awayTeam.name}</h2>
              <div className="text-sm text-slate-400 mt-1">
                Win Rate: {((match.awayTeam.stats.wins / (match.awayTeam.stats.wins + match.awayTeam.stats.losses + (match.awayTeam.stats.draws || 0))) * 100).toFixed(0)}%

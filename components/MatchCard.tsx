@@ -1,6 +1,7 @@
 import React from 'react';
 import { Match, Sport } from '../types';
 import { Calendar, ChevronRight } from 'lucide-react';
+import TeamLogo from './TeamLogo';
 
 interface MatchCardProps {
   match: Match;
@@ -31,7 +32,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, onClick }) => {
       <div className="flex justify-between items-center">
         {/* Home Team */}
         <div className="flex flex-col items-center flex-1">
-          <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="w-12 h-12 rounded-full mb-2 bg-slate-700" />
+          <TeamLogo url={match.homeTeam.logo} name={match.homeTeam.name} size="md" className="mb-2" />
           <span className="font-bold text-lg text-center">{match.homeTeam.name}</span>
           <div className="flex gap-1 mt-1">
             {match.homeTeam.recentForm.map((f, i) => (
@@ -59,7 +60,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, onClick }) => {
 
         {/* Away Team */}
         <div className="flex flex-col items-center flex-1">
-          <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="w-12 h-12 rounded-full mb-2 bg-slate-700" />
+          <TeamLogo url={match.awayTeam.logo} name={match.awayTeam.name} size="md" className="mb-2" />
           <span className="font-bold text-lg text-center">{match.awayTeam.name}</span>
           <div className="flex gap-1 mt-1">
             {match.awayTeam.recentForm.map((f, i) => (
